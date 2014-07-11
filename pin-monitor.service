@@ -1,0 +1,15 @@
+[Unit]
+Description=pin-monitor service
+After=syslog.target
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python /etc/pin-monitor/pin-monitor.py -i
+ExecStop=/usr/bin/python /etc/pin-monitor/pin-monitor.py -x
+Type=simple
+
+# Give a reasonable amount of time for the server to start up/shut down
+TimeoutSec=5
+
+[Install]
+WantedBy=default.target
