@@ -10,9 +10,10 @@ I wrote this to because:
 Anyway, first program in Python so if I made some fundamental mistakes or if it looks awfully like C# in places, so be it.
 
 Note: I tested this on Arch linux ARM 
-      After installing Arch on your SD card:
-       1. pacman -Sy base-devel python pip
-       2. pip install RPi.GPIO 
+      
+       After installing Arch on your SD card:
+         1. pacman -Sy base-devel python pip
+         2. pip install RPi.GPIO 
        
        You will also want to configure the NTP using timedatectl like so :
          1. timedatectl set-timezone Europe/Dublin 
