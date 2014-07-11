@@ -30,7 +30,7 @@ include a JPEG from an IP camera which is attached to the email.
 The IP address of the camera is also taken from the config file as is the unique url used to request the JPEG.
 A sample pin-monitor.conf file is included in the repo and is called demo_pin-monitor.conf.
 
-     To run the service copy the pin-monitor.service file into the /usr/lib/systemd/system directory as root and then type
-      1. systemctl start pin-monitor
-      2. systemctl enable pin-monitor (To have service start a boot)
-      3. systemctl status pin-moniotr (to see if service is running and/or if it has thrown any errors)
+       To run the service copy the pin-monitor.service file into the /usr/lib/systemd/system directory as root and then type
+         1. systemctl start pin-monitor
+         2. systemctl enable pin-monitor (To have service start a boot)
+         3. systemctl status pin-moniotr (to see if service is running and/or if it has thrown any errors)
