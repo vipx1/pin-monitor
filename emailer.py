@@ -1,6 +1,4 @@
-import os
-import configparser
-import pathlib
+
 import datetime
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -12,15 +10,8 @@ import urllib.request
 
 # noinspection PyAttributeOutsideInit
 class EmailClient(object):
-    def __init__(self):
-        config_file = '/etc/pin-monitor/modules/emailer.conf'
-        path = pathlib.Path(config_file)
-        if not path.exists():
-            raise FileNotFoundError('Configuration file not found at Path: {0}\r\nCurrent working directory is {1}'
-                                    .format(path, os.path.dirname(os.path.realpath(__file__))))
-        self._config = configparser.RawConfigParser()
-        self._config._interpolation = configparser.ExtendedInterpolation()
-        self._config.read(config_file)
+    def __init__(self, config):
+        self._config = config
         self.sections = self._config.sections()
         self.host = self._config.get('EMAIL', 'host')
         self.login = self._config.get('EMAIL', 'login')

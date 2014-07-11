@@ -1,19 +1,33 @@
-__author__ = 'Stephen Smith, SKS Communications Limited'
-
+__author__ = 'Stephen Smith, vipx1 Development'
+import os
+import pathlib
+import configparser
 import datetime
 from datetime import timedelta
 from time import sleep
-from modules import emailer
 import argparse
 import RPi.GPIO as GPIO
+import emailer
 
-# <editor-fold desc="Hardware Config">
-
+config_file = '/etc/pin-monitor/pin-monitor.conf'
+path = pathlib.Path(config_file)
+if not path.exists():
+    raise FileNotFoundError('Configuration file not found at Path: {0}\r\nCurrent working directory is {1}'
+                            .format(path, os.path.dirname(os.path.realpath(__file__))))
+config = configparser.RawConfigParser()
+config._interpolation = configparser.ExtendedInterpolation()
+# read config file
+config.read(config_file)
+# set mode in RPi.GPIO
 GPIO.setmode(GPIO.BCM)
+# Turn off warnings about pins being used already
 GPIO.setwarnings(False)
-LED_01 = 4
-LED_02 = 23
-ALARM_CONTACT_01 = 24
+# get pins from config
+LED_01 = config.getint('GPIO', 'LED_01')
+LED_02 = config.getint('GPIO', 'LED_02')
+ALARM_CONTACT_01 = config.getint('GPIO', 'ALARM_CONTACT_01')
+# give the config to the EmailClient class
+ec = emailer.EmailClient(config)
 
 # Pull up resistor, switch against ground!
 GPIO.setup(ALARM_CONTACT_01, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -23,8 +37,6 @@ GPIO.setup(LED_02, GPIO.OUT)
 GPIO.output(LED_01, GPIO.LOW)
 GPIO.output(LED_02, GPIO.LOW)
 
-# </editor-fold>
-
 # Set valid time back one minute so first Alarm can be activated immediately after service start
 alarm_time_stamp = datetime.datetime.now() - timedelta(0, 60)
 
@@ -32,8 +44,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-x', '--exit', help="exit pin-monitor service", action="store_true")
 parser.add_argument("-i", "--init", help='initiate pin-monitor service', action="store_true")
 args = parser.parse_args()
-
-ec = emailer.EmailClient()
 
 
 def clean_exit():
