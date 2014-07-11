@@ -27,6 +27,7 @@ class EmailClient(object):
         self.password = self._config.get('EMAIL', 'password')
         self.recipients = self._config.get('EMAIL', 'recipients')
         self.message = self._config.get('EMAIL', 'message')
+        self.use_camera = self._config.getboolean("CAMERA", "use_camera")
         self.url = self._config.get('CAMERA', 'url')
 
     @staticmethod
@@ -69,7 +70,7 @@ class EmailClient(object):
         body = 'This is a test message from Raspberry Pi.<br>Someone pressed the button @ {0} on {1}.<br />' \
             .format(now.strftime('%H:%M:%S'), now.strftime('%A %d %B %Y'))
         # Message Image
-        img_path = self._config.get('CAMERA', 'temp_dir_path')
+        img_path = '{0}/snap.jpg'.format(self._config.get('CAMERA', 'temp_dir_path'))
         urllib.request.urlretrieve(image_url, img_path)
 
         msg = MIMEMultipart(subtype='mixed')
@@ -100,11 +101,15 @@ class EmailClient(object):
 
     @staticmethod
     def send_email_image_conf(self):
-        """ Send an email with an attached image from url using values from config file
+        """ Send an email and if use_camera is True
+         an image from url in config file will be attached using CAMERA values from config file
 
         :param self: class
         """
-        self.send_email_image(self, self.login, self.password, self.recipients, self.url, self.host)
+        if self._use_camera:
+            self.send_email_image(self, self.login, self.password, self.recipients, self.url, self.host)
+        else:
+            self.send_email_conf(self)
 
     @property
     def sections(self):
@@ -153,6 +158,14 @@ class EmailClient(object):
     @message.setter
     def message(self, value):
         self._message = value
+
+    @property
+    def use_camera(self):
+        return self._use_camera
+
+    @use_camera.setter
+    def use_camera(self, value):
+        self._use_camera = value
 
     @property
     def url(self):
